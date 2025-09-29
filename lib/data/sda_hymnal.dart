@@ -7,7 +7,7 @@ class SdaHymnal {
   final String index;
   final int number;
   final String title;
-  final Lyric lyrics;
+  final List<Lyric> lyrics;
 
   SdaHymnal({
     required this.index,
@@ -20,8 +20,17 @@ class SdaHymnal {
       index: json["index"] as String,
       number: json["number"] as int,
       title: json["title"] as String,
-      lyrics: Lyric.fromJson(json["lyrics"])
+      lyrics: (json["lyrics"] as List<dynamic>)
+      .map((lyricJson) => Lyric.fromJson(lyricJson as Map<String, dynamic>)).toList()
   );
+
+  static SdaHymnal? findById(List<SdaHymnal> hymns, String id){
+    try{
+      return hymns.firstWhere((hymns)=> hymns.index == id);
+  }catch(e){
+      return null;
+  }
+  }
 }
 
 
@@ -45,8 +54,11 @@ class Lyric{
 }
 
 
-Future<Map<String, dynamic>> loadHymnData() async {
-  final String jsonData = await rootBundle.loadString('assets/sda_hymnal.json');
-  final Map<String, dynamic> parsedJson = jsonDecode(jsonData);
-  return parsedJson;
+Future<List<SdaHymnal>> loadHymns() async {
+  final String jsonData = await rootBundle.loadString('assets/hymnal/sda-hymnal-db-eng.json');
+  final List<dynamic> parsedJson = jsonDecode(jsonData) as List<dynamic>;
+
+  return parsedJson
+      .map((hymnJson) => SdaHymnal.fromJson(hymnJson as Map<String, dynamic>))
+      .toList();
 }

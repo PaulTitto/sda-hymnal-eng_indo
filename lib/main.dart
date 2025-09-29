@@ -1,18 +1,39 @@
 import 'package:flutter/material.dart';
-import 'package:sda_hymnal/screen/home_screen.dart';
+
+import 'router/router_delegate.dart';
 
 void main() {
-  runApp(const MyApp());
+  runApp(const SdaHymnalApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SdaHymnalApp extends StatefulWidget {
+  const SdaHymnalApp({super.key});
+
+  @override
+  State<SdaHymnalApp> createState() => _SdaHymnalAppState();
+}
+
+class _SdaHymnalAppState extends State<SdaHymnalApp> {
+  late HymnRouterDelegate _routerDelegate;
+  late HymnRouteInformationParser _routeInformationParser;
+
+  @override
+  void initState() {
+    super.initState();
+    _routerDelegate = HymnRouterDelegate();
+    _routeInformationParser = HymnRouteInformationParser();
+  }
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'SDA Hymnal',
-      home: HomeScreen(),
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        useMaterial3: true,
+      ),
+      routerDelegate: _routerDelegate,
+      routeInformationParser: _routeInformationParser,
     );
   }
 }
